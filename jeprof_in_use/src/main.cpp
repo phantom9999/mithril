@@ -91,10 +91,8 @@ template<
         class Body, class Allocator,
         class Send>
 void
-handle_request(
-        beast::string_view doc_root,
-        http::request<Body, http::basic_fields<Allocator>> &&req,
-        Send &&send) {
+handle_request(http::request<Body, http::basic_fields<Allocator>> &&req,
+               Send &&send) {
     // Returns a bad request response
     auto const bad_request =
             [&req](beast::string_view why) {
@@ -143,46 +141,10 @@ handle_request(
         return send(bad_request("Illegal request-target"));
 
     // Build the path to the requested file
-    std::string path = path_cat(doc_root, req.target());
-    if (req.target().back() == '/')
-        path.append("index.html");
+    // std::string path = path_cat(doc_root, req.target());
+    // if(req.target().back() == '/')
+    //     path.append("index.html");
 
-    // Attempt to open the file
-    beast::error_code ec;
-    http::file_body::value_type body;
-    body.open(path.c_str(), beast::file_mode::scan, ec);
-
-    // Handle the case where the file doesn't exist
-    if (ec == beast::errc::no_such_file_or_directory)
-        return send(not_found(req.target()));
-
-    // Handle an unknown error
-    if (ec)
-        return send(server_error(ec.message()));
-
-    // Cache the size since we need it after the move
-    auto const size = body.size();
-
-    // Respond to HEAD request
-    if (req.method() == http::verb::head) {
-        http::response<http::empty_body> res{http::status::ok, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, mime_type(path));
-        res.content_length(size);
-        res.keep_alive(req.keep_alive());
-        return send(std::move(res));
-    }
-
-    // Respond to GET request
-    http::response<http::file_body> res{
-            std::piecewise_construct,
-            std::make_tuple(std::move(body)),
-            std::make_tuple(http::status::ok, req.version())};
-    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-    res.set(http::field::content_type, mime_type(path));
-    res.content_length(size);
-    res.keep_alive(req.keep_alive());
-    return send(std::move(res));
 }
 
 //------------------------------------------------------------------------------
@@ -375,7 +337,6 @@ class http_session : public std::enable_shared_from_this<http_session> {
 
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
-    std::shared_ptr<std::string const> doc_root_;
     queue queue_;
 
     // The parser is stored in an optional container so we can
@@ -384,10 +345,8 @@ class http_session : public std::enable_shared_from_this<http_session> {
 
 public:
     // Take ownership of the socket
-    http_session(
-            tcp::socket &&socket,
-            std::shared_ptr<std::string const> const &doc_root)
-            : stream_(std::move(socket)), doc_root_(doc_root), queue_(*this) {
+    http_session(tcp::socket &&socket)
+            : stream_(std::move(socket)), queue_(*this) {
     }
 
     // Start the session
@@ -439,17 +398,8 @@ private:
         if (ec)
             return fail(ec, "read");
 
-        // See if it is a WebSocket Upgrade
-        if (websocket::is_upgrade(parser_->get())) {
-            // Create a websocket session, transferring ownership
-            // of both the socket and the HTTP request.
-            std::make_shared<websocket_session>(
-                    stream_.release_socket())->do_accept(parser_->release());
-            return;
-        }
-
         // Send the response
-        handle_request(*doc_root_, parser_->release(), queue_);
+        handle_request(parser_->release(), queue_);
 
         // If we aren't at the queue limit, try to pipeline another request
         if (!queue_.is_full())
@@ -492,14 +442,12 @@ private:
 class listener : public std::enable_shared_from_this<listener> {
     net::io_context &ioc_;
     tcp::acceptor acceptor_;
-    std::shared_ptr<std::string const> doc_root_;
 
 public:
     listener(
             net::io_context &ioc,
-            tcp::endpoint endpoint,
-            std::shared_ptr<std::string const> const &doc_root)
-            : ioc_(ioc), acceptor_(net::make_strand(ioc)), doc_root_(doc_root) {
+            tcp::endpoint endpoint)
+            : ioc_(ioc), acceptor_(net::make_strand(ioc)) {
         beast::error_code ec;
 
         // Open the acceptor
@@ -564,8 +512,7 @@ private:
         } else {
             // Create the http session and run it
             std::make_shared<http_session>(
-                    std::move(socket),
-                    doc_root_)->run();
+                    std::move(socket))->run();
         }
 
         // Accept another connection
@@ -585,18 +532,14 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     auto const address = net::ip::make_address("0.0.0.0");
-    auto const port = static_cast<unsigned short>(std::atoi(8080));
-    auto const doc_root = std::make_shared<std::string>(argv[3]);
-    auto const threads = std::max<int>(1, std::atoi(argv[4]));
+    auto const port = 8080;
+    auto const threads = 8;
 
     // The io_context is required for all I/O
     net::io_context ioc{threads};
 
     // Create and launch a listening port
-    std::make_shared<listener>(
-            ioc,
-            tcp::endpoint{address, port},
-            doc_root)->run();
+    std::make_shared<listener>(ioc, tcp::endpoint{address, port})->run();
 
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     net::signal_set signals(ioc, SIGINT, SIGTERM);
