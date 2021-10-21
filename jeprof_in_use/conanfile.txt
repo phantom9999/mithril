@@ -2,6 +2,7 @@
 
 [requires]
 boost/1.77.0
+jemalloc/5.2.1
 
 [generators]
 cmake
