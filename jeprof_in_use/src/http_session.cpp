@@ -2,15 +2,20 @@
 
 #include <memory>
 #include <vector>
-#include <iostream>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/signal_set.hpp>
 #include "utils.h"
+#include <jemalloc/jemalloc.h>
+#include <glog/logging.h>
 
-HttpSession::HttpSession(boost::asio::ip::tcp::socket &&socket) : stream_(std::move(socket)), queue_(*this) { }
+HttpSession::HttpSession(boost::asio::ip::tcp::socket &&socket) : stream_(std::move(socket)), queue_(*this) {
+    this->handlers_.insert({"/", [this]() { return processNormal(); }});
+    this->handlers_.insert({"/dump", [this]() { return processDump(); }});
+    this->handlers_.insert({"/leak", [this]() { return processLeak(); }});
+}
 
 void HttpSession::run() {
     // We need to be executing within a strand to perform async operations
@@ -116,18 +121,6 @@ void HttpSession::handleRequest(boost::beast::http::request<boost::beast::http::
                 res.prepare_payload();
                 return res;
             };
-
-    // Returns a server error response
-    auto const server_error =
-            [&req](boost::beast::string_view what) {
-                boost::beast::http::response<boost::beast::http::string_body> res{boost::beast::http::status::internal_server_error, req.version()};
-                res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
-                res.set(boost::beast::http::field::content_type, "text/html");
-                res.keep_alive(req.keep_alive());
-                res.body() = "An error occurred: '" + std::string(what) + "'";
-                res.prepare_payload();
-                return res;
-            };
     auto const status_ok =
             [&req](boost::beast::string_view what) {
                 boost::beast::http::response<boost::beast::http::string_body> res{boost::beast::http::status::ok, req.version()};
@@ -148,8 +141,33 @@ void HttpSession::handleRequest(boost::beast::http::request<boost::beast::http::
     if (req.target().empty() || req.target()[0] != '/' || req.target().find("..") != boost::beast::string_view::npos) {
         return send(bad_request("Illegal request-target"));
     }
-    std::cout << req.target() << std::endl;
-    send(status_ok("hello world"));
+    auto handler_it = handlers_.find(std::string(req.target()));
+    if (handler_it == handlers_.end()) {
+        return send(not_found(req.target()));
+    }
+    std::string result = handler_it->second();
+    return send(status_ok(result));
+}
+
+std::string HttpSession::processNormal() {
+    LOG(INFO) << "visit";
+    return "use http://www.webgraphviz.com/ ";
+}
+
+std::string HttpSession::processLeak() {
+    int32_t* leak = new int32_t[1024*256];
+    LOG(INFO) << "leak address " << leak;
+    return "memory leak";
+}
+
+std::string HttpSession::processDump() {
+    if (mallctl("prof.dump", nullptr, nullptr, nullptr, 0) == 0) {
+        LOG(INFO) << "dump sucess";
+        return "dump success";
+    } else {
+        LOG(INFO) << "dump sucess";
+        return "dump fail";
+    }
 }
 
 

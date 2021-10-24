@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
+#include <functional>
 #include <boost/beast/http.hpp>
 #include <boost/beast/core/flat_buffer.hpp>
 #include <boost/beast/core/tcp_stream.hpp>
@@ -51,15 +53,7 @@ public:
         void operator()(boost::beast::http::response<boost::beast::http::string_body> &&msg);
     };
 
-private:
 
-    boost::beast::tcp_stream stream_;
-    boost::beast::flat_buffer buffer_;
-    PipelineQueue queue_;
-
-    // The parser is stored in an optional container so we can
-    // construct it from scratch it at the beginning of each new message.
-    boost::optional<boost::beast::http::request_parser<boost::beast::http::string_body>> parser_;
 
 public:
     /**
@@ -92,6 +86,23 @@ private:
      */
     void handleRequest(boost::beast::http::request<boost::beast::http::string_body> &&req, HttpSession::PipelineQueue& send);
 
+    std::string processNormal();
+
+    std::string processLeak();
+
+    std::string processDump();
+
+private:
+
+    boost::beast::tcp_stream stream_;
+    boost::beast::flat_buffer buffer_;
+    PipelineQueue queue_;
+
+    // The parser is stored in an optional container so we can
+    // construct it from scratch it at the beginning of each new message.
+    boost::optional<boost::beast::http::request_parser<boost::beast::http::string_body>> parser_;
+
+    std::unordered_map<std::string, std::function<std::string()>> handlers_;
 };
 
 
