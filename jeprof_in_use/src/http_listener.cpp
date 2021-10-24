@@ -1,7 +1,7 @@
 #include <boost/asio/strand.hpp>
 #include "http_listener.h"
 #include "http_session.h"
-#include "utils.h"
+#include <glog/logging.h>
 
 HttpListener::HttpListener(boost::asio::io_context &ioc, boost::asio::ip::tcp::endpoint endpoint)
 : ioc_(ioc), acceptor_(boost::asio::make_strand(ioc)) {
@@ -10,21 +10,21 @@ HttpListener::HttpListener(boost::asio::io_context &ioc, boost::asio::ip::tcp::e
     // Open the acceptor
     acceptor_.open(endpoint.protocol(), ec);
     if (ec) {
-        fail(ec, "open");
+        LOG(WARNING) << "error when open: " << ec.message();
         return;
     }
 
     // Allow address reuse
     acceptor_.set_option(boost::asio::socket_base::reuse_address(true), ec);
     if (ec) {
-        fail(ec, "set_option");
+        LOG(WARNING) << "error when set_option: " << ec.message();
         return;
     }
 
     // Bind to the server address
     acceptor_.bind(endpoint, ec);
     if (ec) {
-        fail(ec, "bind");
+        LOG(WARNING) << "error when bind: " << ec.message();
         return;
     }
 
@@ -32,7 +32,7 @@ HttpListener::HttpListener(boost::asio::io_context &ioc, boost::asio::ip::tcp::e
     acceptor_.listen(
             boost::asio::socket_base::max_listen_connections, ec);
     if (ec) {
-        fail(ec, "listen");
+        LOG(WARNING) << "error when listen: " << ec.message();
         return;
     }
 }
@@ -60,11 +60,10 @@ void HttpListener::doAccept() {
 
 void HttpListener::process(boost::beast::error_code ec, boost::asio::ip::tcp::socket socket) {
     if (ec) {
-        fail(ec, "accept");
+        LOG(WARNING) << "error when accept: " << ec.message();
     } else {
         // Create the http session and run it
-        std::make_shared<HttpSession>(
-                std::move(socket))->run();
+        std::make_shared<HttpSession>(std::move(socket))->run();
     }
 
     // Accept another connection

@@ -4,7 +4,6 @@
 #include <memory>
 #include <thread>
 #include <vector>
-#include "utils.h"
 #include "http_listener.h"
 
 int main(int argc, char *argv[]) {

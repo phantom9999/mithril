@@ -7,7 +7,6 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/signal_set.hpp>
-#include "utils.h"
 #include <jemalloc/jemalloc.h>
 #include <glog/logging.h>
 
@@ -41,39 +40,38 @@ void HttpSession::doRead() {
     stream_.expires_after(std::chrono::seconds(30));
 
     // Read a request using the parser-oriented interface
-    boost::beast::http::async_read(
-            stream_,
-            buffer_,
-            *parser_,
-            boost::beast::bind_front_handler(
-                    &HttpSession::onRead,
-                    shared_from_this()));
+    boost::beast::http::async_read(stream_, buffer_, *parser_,
+            boost::beast::bind_front_handler(&HttpSession::onRead,shared_from_this()));
 }
-
 
 void HttpSession::onRead(boost::beast::error_code ec, std::size_t bytes_transferred) {
     boost::ignore_unused(bytes_transferred);
 
     // This means they closed the connection
-    if (ec == boost::beast::http::error::end_of_stream)
+    if (ec == boost::beast::http::error::end_of_stream) {
         return doClose();
+    }
 
-    if (ec)
-        return fail(ec, "read");
+    if (ec) {
+        LOG(WARNING) << "error when read: " << ec.message();
+        return;
+    }
 
     // Send the response
     handleRequest(parser_->release(), queue_);
 
     // If we aren't at the queue limit, try to pipeline another request
-    if (!queue_.isFull())
+    if (!queue_.isFull()) {
         doRead();
+    }
 }
 
 void HttpSession::onWrite(bool close, boost::beast::error_code ec, std::size_t bytes_transferred) {
     boost::ignore_unused(bytes_transferred);
 
-    if (ec)
-        return fail(ec, "write");
+    if (ec) {
+        LOG(WARNING) << "error when write: " << ec.message();
+    }
 
     if (close) {
         // This means we should close the connection, usually because

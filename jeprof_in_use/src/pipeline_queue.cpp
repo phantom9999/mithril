@@ -4,7 +4,6 @@
 #include <boost/beast/http.hpp>
 #include <boost/make_unique.hpp>
 #include <boost/optional.hpp>
-#include "utils.h"
 
 
 struct HttpSession::PipelineQueue::work {
