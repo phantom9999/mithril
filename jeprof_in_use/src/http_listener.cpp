@@ -1,9 +1,11 @@
+#include <boost/asio/strand.hpp>
 #include "http_listener.h"
 #include "http_session.h"
+#include "utils.h"
 
-HttpListener::HttpListener(net::io_context &ioc,tcp::endpoint endpoint)
-: ioc_(ioc), acceptor_(net::make_strand(ioc)) {
-    beast::error_code ec;
+HttpListener::HttpListener(boost::asio::io_context &ioc, boost::asio::ip::tcp::endpoint endpoint)
+: ioc_(ioc), acceptor_(boost::asio::make_strand(ioc)) {
+    boost::beast::error_code ec;
 
     // Open the acceptor
     acceptor_.open(endpoint.protocol(), ec);
@@ -13,7 +15,7 @@ HttpListener::HttpListener(net::io_context &ioc,tcp::endpoint endpoint)
     }
 
     // Allow address reuse
-    acceptor_.set_option(net::socket_base::reuse_address(true), ec);
+    acceptor_.set_option(boost::asio::socket_base::reuse_address(true), ec);
     if (ec) {
         fail(ec, "set_option");
         return;
@@ -28,7 +30,7 @@ HttpListener::HttpListener(net::io_context &ioc,tcp::endpoint endpoint)
 
     // Start listening for connections
     acceptor_.listen(
-            net::socket_base::max_listen_connections, ec);
+            boost::asio::socket_base::max_listen_connections, ec);
     if (ec) {
         fail(ec, "listen");
         return;
@@ -40,9 +42,9 @@ void HttpListener::run() {
     // on the I/O objects in this session. Although not strictly necessary
     // for single-threaded contexts, this example code is written to be
     // thread-safe by default.
-    net::dispatch(
+    boost::asio::dispatch(
             acceptor_.get_executor(),
-            beast::bind_front_handler(
+            boost::beast::bind_front_handler(
                     &HttpListener::doAccept,
                     this->shared_from_this()));
 }
@@ -50,13 +52,13 @@ void HttpListener::run() {
 void HttpListener::doAccept() {
     // The new connection gets its own strand
     acceptor_.async_accept(
-            net::make_strand(ioc_),
-            beast::bind_front_handler(
+            boost::asio::make_strand(ioc_),
+            boost::beast::bind_front_handler(
                     &HttpListener::process,
                     shared_from_this()));
 }
 
-void HttpListener::process(beast::error_code ec, tcp::socket socket) {
+void HttpListener::process(boost::beast::error_code ec, boost::asio::ip::tcp::socket socket) {
     if (ec) {
         fail(ec, "accept");
     } else {
