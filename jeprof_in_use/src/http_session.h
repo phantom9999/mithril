@@ -34,7 +34,7 @@ public:
          * Returns `true` if we have reached the queue limit
          * @return
          */
-        bool is_full() const;
+        bool isFull() const;
 
 
         /**
@@ -42,7 +42,7 @@ public:
          * Returns `true` if the caller should initiate a read
          * @return
          */
-        bool on_write();
+        bool onWrite();
 
         /**
          * Called by the HTTP handler to send a response.
@@ -74,13 +74,13 @@ public:
     void run();
 
 private:
-    void do_read();
+    void doRead();
 
-    void on_read(boost::beast::error_code ec, std::size_t bytes_transferred);
+    void onRead(boost::beast::error_code ec, std::size_t bytes_transferred);
 
-    void on_write(bool close, boost::beast::error_code ec, std::size_t bytes_transferred);
+    void onWrite(bool close, boost::beast::error_code ec, std::size_t bytes_transferred);
 
-    void do_close();
+    void doClose();
 
     /**
      * This function produces an HTTP response for the given
@@ -90,7 +90,7 @@ private:
      * @param req
      * @param send
      */
-    void handle_request(boost::beast::http::request<boost::beast::http::string_body> &&req, HttpSession::PipelineQueue& send);
+    void handleRequest(boost::beast::http::request<boost::beast::http::string_body> &&req, HttpSession::PipelineQueue& send);
 
 };
 

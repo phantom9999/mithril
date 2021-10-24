@@ -19,13 +19,13 @@ HttpSession::PipelineQueue::PipelineQueue(HttpSession &self) : self_(self) {
 }
 
 
-bool HttpSession::PipelineQueue::is_full() const {
+bool HttpSession::PipelineQueue::isFull() const {
     return items_.size() >= limit;
 }
 
-bool HttpSession::PipelineQueue::on_write() {
+bool HttpSession::PipelineQueue::onWrite() {
     BOOST_ASSERT(!items_.empty());
-    auto const was_full = is_full();
+    auto const was_full = isFull();
     items_.erase(items_.begin());
     if (!items_.empty())
         (*items_.front())();
@@ -47,7 +47,7 @@ void HttpSession::PipelineQueue::operator()(boost::beast::http::response<boost::
         operator()() {
             boost::beast::http::async_write(self_.stream_, msg_,
                               boost::beast::bind_front_handler(
-                                      &HttpSession::on_write,
+                                      &HttpSession::onWrite,
                                       self_.shared_from_this(),
                                       msg_.need_eof()));
         }

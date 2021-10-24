@@ -20,11 +20,11 @@ void HttpSession::run() {
     boost::asio::dispatch(
             stream_.get_executor(),
             boost::beast::bind_front_handler(
-                    &HttpSession::do_read,
+                    &HttpSession::doRead,
                     this->shared_from_this()));
 }
 
-void HttpSession::do_read() {
+void HttpSession::doRead() {
     // Construct a new parser for each message
     parser_.emplace();
 
@@ -41,30 +41,30 @@ void HttpSession::do_read() {
             buffer_,
             *parser_,
             boost::beast::bind_front_handler(
-                    &HttpSession::on_read,
+                    &HttpSession::onRead,
                     shared_from_this()));
 }
 
 
-void HttpSession::on_read(boost::beast::error_code ec, std::size_t bytes_transferred) {
+void HttpSession::onRead(boost::beast::error_code ec, std::size_t bytes_transferred) {
     boost::ignore_unused(bytes_transferred);
 
     // This means they closed the connection
     if (ec == boost::beast::http::error::end_of_stream)
-        return do_close();
+        return doClose();
 
     if (ec)
         return fail(ec, "read");
 
     // Send the response
-    handle_request(parser_->release(), queue_);
+    handleRequest(parser_->release(), queue_);
 
     // If we aren't at the queue limit, try to pipeline another request
-    if (!queue_.is_full())
-        do_read();
+    if (!queue_.isFull())
+        doRead();
 }
 
-void HttpSession::on_write(bool close, boost::beast::error_code ec, std::size_t bytes_transferred) {
+void HttpSession::onWrite(bool close, boost::beast::error_code ec, std::size_t bytes_transferred) {
     boost::ignore_unused(bytes_transferred);
 
     if (ec)
@@ -73,17 +73,17 @@ void HttpSession::on_write(bool close, boost::beast::error_code ec, std::size_t 
     if (close) {
         // This means we should close the connection, usually because
         // the response indicated the "Connection: close" semantic.
-        return do_close();
+        return doClose();
     }
 
     // Inform the queue that a write completed
-    if (queue_.on_write()) {
+    if (queue_.onWrite()) {
         // Read another request
-        do_read();
+        doRead();
     }
 }
 
-void HttpSession::do_close() {
+void HttpSession::doClose() {
     // Send a TCP shutdown
     boost::beast::error_code ec;
     stream_.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_send, ec);
@@ -91,7 +91,7 @@ void HttpSession::do_close() {
     // At this point the connection is closed gracefully
 }
 
-void HttpSession::handle_request(boost::beast::http::request<boost::beast::http::string_body> &&req, HttpSession::PipelineQueue& send) {
+void HttpSession::handleRequest(boost::beast::http::request<boost::beast::http::string_body> &&req, HttpSession::PipelineQueue& send) {
     // AAA<decltype(send)> aa;
     // Returns a bad request response
     auto const bad_request =
