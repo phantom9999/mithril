@@ -1,0 +1,9 @@
+[build_requires]
+
+[requires]
+protobuf/3.17.1
+
+[generators]
+cmake
+
+[options]
