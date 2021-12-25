@@ -2,6 +2,8 @@
 
 [requires]
 boost/1.77.0
+folly/2020.08.10.00
+abseil/20211102.0
 
 [generators]
 cmake
