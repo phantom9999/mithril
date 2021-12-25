@@ -38,5 +38,5 @@ class SegmentHashMap {
 
  private:
   Segment<KeyType, ValueType> segment_[SIZE];
-  std::hash<int32_t> hash_func_;
+  std::hash<KeyType> hash_func_;
 };
