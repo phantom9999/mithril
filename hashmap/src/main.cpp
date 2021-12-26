@@ -1,8 +1,24 @@
-#include <unordered_map>
+#include <iostream>
+#include "custom_hash_map.h"
 
 int main() {
-  std::unordered_map<int32_t, int32_t> data1;
-  data1.insert(std::make_pair(2, 3));
-  data1.insert(std::pair(2, 4));
+  HashMap* pp{nullptr};
+  {
+    HashMap hash_map{100};
+    pp = &hash_map;
+    hash_map.set(10, 100);
+    hash_map.set(1, 50);
+    {
+      int tmp{0};
+      hash_map.get(10, &tmp);
+      std::cout << tmp << std::endl;
+    }
+    {
+      int tmp{0};
+      hash_map.get(1, &tmp);
+      std::cout << tmp << std::endl;
+    }
+  }
+  int a = 0;
+  a += 1;
 }
-
