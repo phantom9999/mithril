@@ -1,8 +1,0 @@
-[build_requires]
-
-[requires]
-
-[generators]
-cmake
-
-[options]
