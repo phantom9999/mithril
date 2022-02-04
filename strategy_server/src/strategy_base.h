@@ -1,22 +1,21 @@
 #pragma once
 
-#include <type_traits>
-#include <taskflow/taskflow.hpp>
-
 #include <any>
 #include <memory>
-#include <type_traits>
 #include <utility>
-#include "taskflow/taskflow.hpp"
-
-
+#include <type_traits>
+#include <taskflow/taskflow.hpp>
+#include "session.h"
 
 class StrategyBase {
  public:
   StrategyBase() = default;
   virtual ~StrategyBase() = default;
 
- private:
+  void bindSession(const SessionPtr& session);
+
+ protected:
+  SessionPtr session_{nullptr};
 };
 
 class StaticStrategy : public StrategyBase {
@@ -32,14 +31,14 @@ class DynamicStrategy : public StrategyBase {
 template <typename StrategyName,
     typename ... Args,
     typename std::enable_if_t<std::is_base_of_v<StrategyBase, StrategyName>, int> = 0>
-auto createStrategy(Args&& ... args) {
+auto createStrategy(const SessionPtr session, Args&& ... args) {
+  std::shared_ptr<StrategyName> class_name = std::make_shared<StrategyName>(std::forward<Args>(args)...);
+  class_name->bindSession(session);
   if constexpr (std::is_base_of_v<StaticStrategy, StrategyName>) {
-    std::shared_ptr<StrategyName> class_name = std::make_shared<StrategyName>(std::forward<Args>(args)...);
     return [class_name]() {
       class_name->run();
     };
   } else if constexpr (std::is_base_of_v<DynamicStrategy, StrategyName>) {
-    std::shared_ptr<StrategyName> class_name = std::make_shared<StrategyName>(std::forward<Args>(args)...);
     return [class_name](tf::Subflow &subflow) {
       class_name->run(subflow);
     };

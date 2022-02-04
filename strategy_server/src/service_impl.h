@@ -13,6 +13,5 @@ class ServiceImpl final : public StrategyService::Service {
 
  private:
   tf::Executor executor_{10};
-  tf::Taskflow taskflow_;
 };
 

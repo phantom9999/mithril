@@ -7,7 +7,10 @@
 
 BETTER_ENUM(SessionType, uint32_t,
             REQUEST,
-            RESPONSE);
+            RESPONSE,
+            A,
+            B,
+            C);
 
 
 
@@ -41,7 +44,7 @@ class Session {
     }
     try {
       return std::any_cast<Class>(*content_[+type]);
-    } catch (std::bad_any_cast const &) {
+    } catch (std::bad_any_cast const & e) {
       return nullptr;
     }
   }
@@ -51,3 +54,6 @@ class Session {
  private:
   std::vector<std::shared_ptr<std::any>> content_;
 };
+
+using SessionPtr = std::shared_ptr<Session>;
+
