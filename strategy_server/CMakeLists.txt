@@ -16,6 +16,7 @@ include_directories(src)
 
 # 服务端
 aux_source_directory(src SRC)
+aux_source_directory(src/strategies SRC)
 add_executable(strategy_server ${SRC})
 target_link_libraries(strategy_server service_proto)
 conan_target_link_libraries(strategy_server)
