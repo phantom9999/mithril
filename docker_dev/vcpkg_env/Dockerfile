@@ -21,7 +21,7 @@ RUN source /opt/dev.sh; \
     rm 2022.02.23.tar.gz;
 
 RUN source /opt/dev.sh; \
-    which git; \
+    whereis git; \
     cd /opt/vcpkg_home; \
     ./bootstrap-vcpkg.sh -disableMetrics;
 
