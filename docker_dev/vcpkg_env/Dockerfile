@@ -1,6 +1,5 @@
 FROM centos:7
 
-
 RUN yum install -y centos-release-scl-rh curl zip unzip tar;
 
 RUN yum install -y wget devtoolset-11-gcc-c++ devtoolset-11-make rh-git227-git; \
