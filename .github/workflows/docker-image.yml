@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     paths:
-      - "docker_dev/vcpkg_env/"
+      - "docker_dev/vcpkg_env/Dockerfile"
 
 jobs:
 
