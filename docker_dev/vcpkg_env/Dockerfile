@@ -2,12 +2,13 @@ FROM centos:7
 
 RUN yum install -y centos-release-scl-rh curl zip unzip tar;
 
-RUN yum install -y wget devtoolset-11-gcc-c++ devtoolset-11-make rh-git227-git; \
+RUN yum install -y wget devtoolset-11-gcc-c++ devtoolset-11-make rh-git227-git rh-python38-python; \
     yum clean all; \
     rm -rf /var/cache/yum/* 
 
 RUN echo "source /opt/rh/devtoolset-11/enable" >> /opt/dev.sh; \
-   echo "source /opt/rh/rh-git227/enable" >> /opt/dev.sh;
+   echo "source /opt/rh/rh-git227/enable" >> /opt/dev.sh; \
+   echo "source /opt/rh/rh-python38/enable" >> /opt/dev.sh;
 
 ENV BASH_ENV=/opt/dev.sh \
     ENV=/opt/dev.sh \
@@ -27,6 +28,5 @@ RUN source /opt/dev.sh; \
 
 ENV PATH=/opt/vcpkg_home:$PATH
 
-#RUN vcpkg install gflags glog; cat /opt/vcpkg-2022.02.23/buildtrees/detect_compiler/config-x64-linux-rel-err.log;
-ADD install.sh /root/install.sh
-RUN sh /root/install.sh
+#ADD install.sh /root/install.sh
+#RUN sh /root/install.sh
