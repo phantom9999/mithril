@@ -28,5 +28,5 @@ RUN source /opt/dev.sh; \
 
 ENV PATH=/opt/vcpkg_home:$PATH
 
-#ADD install.sh /root/install.sh
-#RUN sh /root/install.sh
+ADD install.sh /root/install.sh
+RUN sh /root/install.sh
