@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "docker_dev/vcpkg_env/Dockerfile"
+      - "docker_dev/vcpkg_env/install.sh"
 
 jobs:
 
