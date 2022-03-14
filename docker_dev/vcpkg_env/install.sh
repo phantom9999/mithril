@@ -3,12 +3,7 @@
 set -x
 
 source /opt/dev.sh;
-vcpkg install gflags glog;
-cat /opt/vcpkg-2022.02.23/buildtrees/detect_compiler/config-x64-linux-rel-err.log
-yum install -y tree;
-cd /opt/vcpkg-2022.02.23;
-tree -h
-
-
-
-
+vcpkg install gflags glog folly grpc boost;
+cd /opt/vcpkg_home;
+rm -rf buildtrees/*
+rm -f downloads/*.gz
