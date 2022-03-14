@@ -30,4 +30,3 @@ ENV PATH=/opt/vcpkg_home:$PATH
 #RUN vcpkg install gflags glog; cat /opt/vcpkg-2022.02.23/buildtrees/detect_compiler/config-x64-linux-rel-err.log;
 ADD install.sh /root/install.sh
 RUN sh /root/install.sh
-
