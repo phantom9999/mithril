@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package FaissServer;
+
+message RetrievalItem {
+    uint64 id = 1;
+    float score = 2;
+}
+
+message IndexConfig {
+    enum IndexName {
+        RANDOM = 0;
+    }
+}
+
+
+message SingleRequest {
+    repeated float vec = 1;
+    uint32 vec_size = 2;
+    IndexConfig.IndexName index_name = 3;
+    uint32 topk = 4;
+}
+
+message SingleResponse {
+    enum Status {
+        OK = 0;
+    }
+    Status status = 1;
+    repeated RetrievalItem items = 2;
+}
+
+service FaissService {
+    rpc SingleRetrieval(SingleRequest) returns (SingleResponse);
+}
+
