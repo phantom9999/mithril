@@ -13,13 +13,12 @@ message LogConfig {
 }
 
 message ServiceConfig {
-
+  string config = 1;
 }
 
 message ServerConfig {
   uint32 port = 1;
-  uint32 threadNum = 2;
-  LogConfig logConfig = 3;
-  ServiceConfig serviceConfig = 4;
+  uint32 thread_num = 2;
+  LogConfig log_config = 3;
+  repeated ServiceConfig service_config = 4;
 }
-
