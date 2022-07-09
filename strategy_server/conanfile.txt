@@ -10,5 +10,7 @@ taskflow/3.3.0
 
 [generators]
 cmake
+cmake_find_package
+cmake_paths
 
 [options]

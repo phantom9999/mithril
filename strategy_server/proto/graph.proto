@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+message Session {
+    enum Type {
+        NONE = 0;
+        REQUEST = 1;
+        RESPONSE = 2;
+        SESSION1 = 3;
+        SESSION2 = 4;
+        SESSION3 = 5;
+        SESSION4 = 6;
+    }
+}
+
+message OpDef {
+    string name = 1;
+    repeated Session.Type inputs = 2;
+    Session.Type output = 3;
+}
+
+message GraphDef {
+    string name = 1;
+    repeated OpDef op_defs = 2;
+}
+
+message GraphsConf {
+    repeated GraphDef graph_defs = 1;
+}
+
+
