@@ -1,4 +1,6 @@
 #include "kernel_context.h"
+#include <glog/logging.h>
+#include <glog/logging.h>
 
 KernelContext::KernelContext() {
   data_.resize(Session_Type_Type_MAX);

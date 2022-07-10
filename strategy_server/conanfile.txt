@@ -4,12 +4,14 @@
 #boost/1.77.0
 #folly/2020.08.10.00
 #abseil/20211102.0
-grpc/1.43.0
+grpc/1.47.0
 #gtest/1.11.0
-taskflow/3.3.0
+taskflow/3.4.0
+glog/0.6.0
+gflags/2.2.2
 
 [generators]
-cmake
+#cmake
 cmake_find_package
 cmake_paths
 

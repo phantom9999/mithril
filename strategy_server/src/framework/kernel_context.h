@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <any>
+#include <glog/logging.h>
 #include "proto/graph.pb.h"
 
 class KernelContext {
@@ -13,14 +14,18 @@ public:
   bool BuildSubContext(KernelContext* context, const std::vector<Session::Type>& inputs);
 
   template<typename Type>
-  std::shared_ptr<Type> AnyCast(Session_Type index) {
+  std::shared_ptr<Type> AnyCast(Session_Type index) const {
     auto data = data_[index];
-    if (data == nullptr) {
+    if (data == nullptr || !data->has_value()) {
       return nullptr;
     }
     try {
       return std::any_cast<std::shared_ptr<Type>>(*data);
     } catch (std::bad_any_cast const & e) {
+      LOG(WARNING) << Session_Type_Name(index) << std::boolalpha
+        << "; has " << data->has_value()
+        << "; type " << data->type().name()
+        << "; but " << e.what();
       return nullptr;
     }
   }

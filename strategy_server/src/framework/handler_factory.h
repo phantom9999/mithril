@@ -17,12 +17,18 @@ public:
   std::unique_ptr<ProcessHandler> BuildNew(tf::Executor& executor);
 
 public:
-  static void Register(Session::Type key, Creater* creater) {
-    creaters_[key] = creater;
-  }
+  static bool Register(Session::Type key, Creater creater);
 
 private:
   // <output, [input]>
-  std::unordered_map<Session_Type, std::vector<Session_Type>> graph_;
-  inline static std::vector<Creater*> creaters_{};
+  std::unordered_map<Session_Type, OpDef> graph_;
+  inline static std::unordered_map<Session_Type, Creater> creaters_;
 };
+
+#define OP_REGISTER(class_name, key) \
+  static const bool register_op_##class_name = HandlerFactory::Register( \
+    key, [](const std::vector<Session::Type>& inputs, Session::Type output)->OpKernel* { \
+      auto op = new class_name;              \
+      op->BindMeta(inputs, output);  \
+      return op;                     \
+      });

@@ -1,7 +1,9 @@
 #include "graph_factory.h"
+#include <glog/logging.h>
 
 GraphFactory::GraphFactory(const GraphsConf& graphs_conf) {
   for (const auto& graph_def : graphs_conf.graph_defs()) {
+    LOG(INFO) << "create graph factory: " << graph_def.name();
     factories_.emplace(graph_def.name(), std::make_unique<HandlerFactory>(graph_def));
   }
 }

@@ -8,11 +8,15 @@ find_package(Protobuf REQUIRED)
 find_package(gRPC REQUIRED)
 find_package(Taskflow REQUIRED)
 find_package(absl REQUIRED)
+find_package(gflags REQUIRED)
+find_package(glog REQUIRED)
 
 include_directories(${Taskflow_INCLUDES})
 include_directories(${protobuf_INCLUDES})
 include_directories(${gRPC_INCLUDES})
 include_directories(${absl_INCLUDES})
+include_directories(${gflags_INCLUDES})
+include_directories(${glog_INCLUDES})
 
 get_target_property(grpc_cpp_plugin_location gRPC::grpc_cpp_plugin LOCATION)
 get_target_property(protoc_location protobuf::protoc LOCATION)
@@ -42,6 +46,8 @@ target_link_libraries(
         strategy_server
         proto
         gRPC::grpc++
+        glog::glog
+        gflags::gflags
 )
 
 

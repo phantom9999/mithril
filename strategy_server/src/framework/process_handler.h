@@ -17,7 +17,11 @@ public:
    * @param response_type
    * @return
    */
-  bool Run(const StrategyRequest* request, Session::Type requestType, StrategyResponse* response, Session_Type response_type);
+  bool Run(const StrategyRequest* request, Session::Type request_type, StrategyResponse* response, Session_Type response_type);
+
+  std::string Dump();
+
+  void Dump(std::ostream& os);
 
 private:
   tf::Executor& executor_;

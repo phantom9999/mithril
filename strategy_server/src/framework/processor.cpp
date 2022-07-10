@@ -1,4 +1,5 @@
 #include "processor.h"
+#include <glog/logging.h>
 
 Processor::Processor(const GraphsConf& graphs_conf, size_t max_concurrent) : executor_(max_concurrent) {
   factory_ = std::make_unique<GraphFactory>(graphs_conf);
@@ -17,6 +18,7 @@ bool Processor::Run(const StrategyRequest* request, StrategyResponse* response) 
   auto it = queue_.find(name);
   if (it == queue_.end()) {
     // 没找到
+    LOG(WARNING) << "graph [" << name << "] not found";
     return false;
   }
   std::unique_ptr<ProcessHandler> handler;
@@ -39,3 +41,10 @@ bool Processor::Run(const StrategyRequest* request, StrategyResponse* response) 
   return result;
 }
 
+void Processor::DumpGraph(std::ostream &os) {
+  os << "use http://dreampuf.github.io/GraphvizOnline/ \n";
+  for (const auto& [key, que] : queue_) {
+    os << "\nname : " << key << "; graph: \n";
+    que->queue_.front()->Dump(os);
+  }
+}

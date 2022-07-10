@@ -7,11 +7,11 @@ message Session {
         RESPONSE1 = 2;
         REQUEST2 = 3;
         RESPONSE2 = 4;
-        OPERATOR1 = 11;
-        OPERATOR2 = 12;
-        OPERATOR3 = 13;
-        OPERATOR4 = 14;
-        OPERATOR5 = 15;
+        AD_LIST_SCORE_INIT = 11;
+        AD_LIST_SCORE_ADD_POS = 12;
+        AD_LIST_SCORE_ADD_BID = 13;
+        AD_LIST_SCORE_MUT = 14;
+        AD_SCORE_SORT = 15;
         OPERATOR6 = 16;
     }
 }

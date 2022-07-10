@@ -20,9 +20,11 @@ public:
 
   bool Run(const StrategyRequest* request, StrategyResponse* response);
 
+  void DumpGraph(std::ostream &os);
+
   std::tuple<std::string, Session_Type, Session_Type> SelectGraph(const StrategyRequest* request) {
     // todo: 选图的逻辑
-    return std::make_tuple("xx", Session_Type_REQUEST1, Session_Type_RESPONSE1);
+    return std::make_tuple(request->graph(), Session_Type_REQUEST1, Session_Type_RESPONSE1);
   }
 
 private:
