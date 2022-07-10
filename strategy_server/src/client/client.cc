@@ -16,35 +16,8 @@ void BuildRequest(StrategyRequest* request) {
   }
 }
 
-template<typename Type>
-std::shared_ptr<Type> AnyCast(Session_Type index, std::vector<std::shared_ptr<std::any>>& data_) {
-  auto data = data_[index];
-  if (data == nullptr) {
-    return nullptr;
-  }
-  try {
-    return std::any_cast<std::shared_ptr<Type>>(*data);
-  } catch (std::bad_any_cast const & e) {
-    std::cout << Session_Type_Name(index) << std::boolalpha << "; has " << data->has_value() << "; but " << e.what();
-    return nullptr;
-  }
-}
 
-
-int main() {
-  /*std::vector<std::shared_ptr<std::any>> data_list(10);
-  {
-    auto request = std::make_shared<StrategyRequest>();
-    request->set_logid(1234);
-    auto data = std::make_shared<std::any>(request);
-    std::cout << data->type().name() << std::endl;
-    data_list[Session::REQUEST1] = data;
-  }
-  {
-    auto new_request = AnyCast<StrategyRequest>(Session::REQUEST1, data_list);
-    std::cout << std::boolalpha << (new_request == nullptr) << " " << new_request->logid();
-  }*/
-
+void Call() {
   StrategyRequest request;
   srand(time(0));
   BuildRequest(&request);
@@ -60,6 +33,10 @@ int main() {
     std::cout << status.error_code() << ": " << status.error_message()
               << std::endl;
   }
+}
+
+int main() {
+  Call();
 }
 
 
