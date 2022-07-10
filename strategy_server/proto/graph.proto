@@ -3,12 +3,16 @@ syntax = "proto3";
 message Session {
     enum Type {
         NONE = 0;
-        REQUEST = 1;
-        RESPONSE = 2;
-        SESSION1 = 3;
-        SESSION2 = 4;
-        SESSION3 = 5;
-        SESSION4 = 6;
+        REQUEST1 = 1;
+        RESPONSE1 = 2;
+        REQUEST2 = 3;
+        RESPONSE2 = 4;
+        OPERATOR1 = 11;
+        OPERATOR2 = 12;
+        OPERATOR3 = 13;
+        OPERATOR4 = 14;
+        OPERATOR5 = 15;
+        OPERATOR6 = 16;
     }
 }
 

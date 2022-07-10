@@ -1,4 +1,4 @@
-#include "service.grpc.pb.h"
+#include "proto/service.grpc.pb.h"
 #include <grpc++/grpc++.h>
 
 
@@ -13,7 +13,7 @@ int main() {
 
   grpc::Status status = stub->Rank(&context, request, &response);
   if (status.ok()) {
-    std::cout << response.result() << std::endl;
+    std::cout << response.ad_infos_size() << std::endl;
   } else {
     std::cout << status.error_code() << ": " << status.error_message()
               << std::endl;
