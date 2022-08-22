@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package FaissServer;
+
+import "index_config.proto";
+
+message IndexConfig {
+    enum LoadStrategy {
+        LOAD_NEWEST_ONE = 0;
+        LOAD_ALL_EXIST = 1;
+    }
+
+    FaissIndex.ModelName model_name = 1; // 模型名
+    FaissIndex.IndexType index_type = 2; // 索引类型
+    LoadStrategy load_strategy = 3;      // 加载策略
+}
+
+message ServerConfig {
+    uint32 port = 1; // 服务端口
+    string index_path = 2; // 索引路径
+    IndexConfig index_config = 3; // 索引配置
+    uint32 poll_time = 4; // 更新时间
+}

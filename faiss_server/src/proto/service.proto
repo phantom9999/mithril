@@ -2,26 +2,32 @@ syntax = "proto3";
 
 package FaissServer;
 
+import "index_config.proto";
+
+message IndexMeta {
+    FaissIndex.ModelName model_name = 1;
+    FaissIndex.IndexType index_type = 2;
+    enum IndexStrategy {
+        USER_NEWEST = 0;
+        USE_ASSIGN = 1;
+    }
+    IndexStrategy index_strategy = 3;
+    uint32 version = 4;
+}
+
+message FaissRequest {
+    IndexMeta index_meta = 1;
+    repeated float vec = 2;
+    uint32 vec_size = 3;
+    uint32 topk = 4;
+}
+
 message RetrievalItem {
     uint64 id = 1;
     float score = 2;
 }
 
-message IndexConfig {
-    enum IndexName {
-        RANDOM = 0;
-    }
-}
-
-
-message SingleRequest {
-    repeated float vec = 1;
-    uint32 vec_size = 2;
-    IndexConfig.IndexName index_name = 3;
-    uint32 topk = 4;
-}
-
-message SingleResponse {
+message FaissResponse {
     enum Status {
         OK = 0;
     }
@@ -29,7 +35,27 @@ message SingleResponse {
     repeated RetrievalItem items = 2;
 }
 
-service FaissService {
-    rpc SingleRetrieval(SingleRequest) returns (SingleResponse);
+message StatusRequest {
+
 }
+
+message StatusResponse {
+
+}
+
+message DebugRequest {
+
+}
+
+message DebugResponse {
+
+}
+
+
+service FaissService {
+    rpc Retrieval(FaissRequest) returns (FaissResponse);
+    rpc Debug(DebugRequest) returns (DebugResponse);
+    rpc Status(StatusRequest) returns (StatusResponse);
+}
+
 
