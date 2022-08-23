@@ -1,0 +1,9 @@
+syntax="proto3";
+
+package protos;
+
+message UnitTable {
+    uint64 id = 1;
+    uint64 campaign_id = 2;
+    uint64 account_id = 3;
+}

@@ -1,0 +1,18 @@
+syntax="proto3";
+
+package protos;
+
+
+message MaterialIndex {
+    enum TableName {
+        UNKNOWN = 0;
+        CREATIVE_TABLE = 1;
+        UNIT_TABLE = 2;
+        CAMPAIGN_TABLE = 3;
+        ACCOUNT_TABLE = 4;
+    }
+
+
+}
+
+

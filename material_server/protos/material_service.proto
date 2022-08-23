@@ -1,0 +1,36 @@
+syntax="proto3";
+
+package protos;
+
+message FindRequest {
+
+}
+
+message FindResponse {
+
+}
+
+message TableRequest {
+
+}
+
+message TableResponse {
+
+}
+
+message StatusRequest {
+
+}
+
+message StatusResponse {
+
+}
+
+service MaterialService {
+    rpc Find(FindRequest) returns (FindResponse);
+    rpc Table(TableRequest) returns (TableResponse);
+    rpc Status(StatusRequest) returns (StatusResponse);
+}
+
+
+
