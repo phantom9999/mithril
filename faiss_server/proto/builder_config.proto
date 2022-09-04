@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+import "index_constants.proto";
+
+message TaskConfig {
+  Constants.ModelName model_name = 1;
+  string input_path = 2;
+  repeated Constants.IndexType index_types = 3;
+}
+
+message IndexTag {
+  Constants.IndexType index_type = 1;
+  string tag = 2;
+}
+
+message BuilderConfig {
+  repeated TaskConfig tasks = 1;
+  repeated IndexTag index_tags = 2;
+  string output_path = 3;
+}

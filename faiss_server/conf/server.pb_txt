@@ -1,0 +1,13 @@
+
+
+index_config: {
+    index_path: "index"
+
+    model_config: {
+        model_name: DSSM_V1
+    }
+
+    model_config: {
+        model_name: DSSM_V2
+    }
+}

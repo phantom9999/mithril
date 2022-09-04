@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto;
+
+
+message Constants {
+  enum ModelName {
+    DSSM_V1 = 0;
+    DSSM_V2 = 1;
+  }
+  enum IndexType {
+    DEFAULT = 0;
+    IVF100 = 1;
+    PQ32 = 2;
+    PCA80_Flat = 3;
+    IVF4096_Flat = 4;
+    IVF4096_PQ8_16 = 5;
+    IVF4096_PQ32 = 6;
+    IMI2x8_PQ32 = 7;
+    IMI2x8_PQ8_16 = 8;
+    OPQ16_64_IMI2x8_PQ8_16 = 9;
+  }
+}
+
+
+

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package proto;
+
+import "index_constants.proto";
+
+message RetrievalRequest {
+  Constants.ModelName model_name = 1;
+  Constants.IndexType index_type = 2;
+
+  repeated float query_vec = 3;
+  uint32 query_size = 4;
+  uint32 topk = 5;
+}
+
+message RetrievalItem {
+  string label = 1;
+  float score = 2;
+}
+
+message RetrievalBatch {
+  uint32 id = 1;
+  repeated RetrievalItem items = 2;
+}
+
+message RetrievalResponse {
+  enum Status {
+    OK = 0;
+  }
+  Status status = 1;
+  string msg = 2;
+  uint64 version = 3;
+  repeated RetrievalBatch batches = 4;
+}
+
+message StatusRequest {
+
+}
+
+message IndexStatus {
+  Constants.IndexType index_type = 1;
+  uint64 dim = 2;
+  uint64 length = 3;
+}
+
+message ModelStatus {
+  Constants.ModelName model_name = 1;
+  uint64 version = 2;
+  repeated IndexStatus index_status = 3;
+}
+
+message StatusResponse {
+  repeated ModelStatus model_status = 1;
+}
+
+
+service IndexService {
+  rpc Retrieval(RetrievalRequest) returns (RetrievalResponse);
+  rpc Status(StatusRequest) returns (StatusResponse);
+}
+
+

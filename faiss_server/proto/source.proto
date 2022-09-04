@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package proto;
+
+message SourceMeta {
+  uint32 dim = 1;
+  uint64 length = 2;
+}
+
+message Source {
+  string label = 1;
+  repeated float vec = 2;
+}

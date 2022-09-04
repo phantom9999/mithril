@@ -1,0 +1,16 @@
+
+tasks: {
+model_name: DSSM_V1
+input_path: "."
+index_types: DEFAULT
+index_types: IVF100
+}
+
+tasks: {
+model_name: DSSM_V2
+input_path: "."
+index_types: DEFAULT
+index_types: PCA80_Flat
+}
+
+output_path: "index"
