@@ -58,14 +58,14 @@ add_executable(client src/client/client.cpp)
 target_link_libraries(
     data_gen
     common
-    vector_proto
+    faiss_proto
     absl::strings
     gflags::gflags
 )
 target_link_libraries(
     faiss_builder
     common
-    vector_proto
+    faiss_proto
     gflags::gflags
     absl::strings
     faiss
@@ -74,7 +74,7 @@ target_link_libraries(
 
 target_link_libraries(
     faiss_server
-    vector_proto
+    faiss_proto
     common
     gRPC::grpc++
     glog::glog
@@ -85,7 +85,7 @@ target_link_libraries(
 
 target_link_libraries(
     client
-    vector_proto
+    faiss_proto
     gRPC::grpc++
     glog::glog
     protobuf::libprotobuf
