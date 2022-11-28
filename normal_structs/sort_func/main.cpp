@@ -70,6 +70,8 @@ class Solution {
 
 
 int main() {
+  std::string a;
+  a += "xx";
   TreeNode* root = new TreeNode(1);
   TreeNode* left = new TreeNode(2);
   TreeNode* right = new TreeNode(3);

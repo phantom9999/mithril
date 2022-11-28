@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 template<typename Type>
 class TrieMap {
