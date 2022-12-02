@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 if (CMAKE_HOST_UNIX)
     find_package(Protobuf REQUIRED)
     find_package(glog REQUIRED)
-    find_package(gflags REQUIRED)
+    find_package(gflags COMPONENTS static)
+    message(${GFLAGS_TARGET})
     find_package(gRPC REQUIRED)
     find_package(absl REQUIRED)
     find_package(Boost COMPONENTS fiber REQUIRED)
@@ -18,6 +19,7 @@ if (CMAKE_HOST_UNIX)
 elseif(CMAKE_HOST_WIN32)
     include_directories(incs/boost_include)
     include_directories(incs/local_include)
+    include_directories(build)
 endif()
 
 include_directories(src)
@@ -35,8 +37,12 @@ if (CMAKE_HOST_UNIX)
     target_link_libraries(
             meta_server
             gRPC::grpc++
+            gRPC::grpc++_reflection
+            glog::glog
+            gflags
             ${Boost_LIBRARIES}
     )
 endif()
+
 
 

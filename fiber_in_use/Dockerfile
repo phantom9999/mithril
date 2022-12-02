@@ -19,12 +19,7 @@ RUN wget https://github.com/google/glog/archive/refs/tags/v0.6.0.tar.gz && \
 
 RUN git clone -b v1.47.0 https://github.com/grpc/grpc.git && \
     cd grpc && git submodule init && git submodule update && \
-    (cd third_party/cares/cares && cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCARES_STATIC=ON -DCARES_SHARED=OFF -DCARES_STATIC_PIC=ON . && make -j4 && make install) && \
-    (cd third_party/protobuf/ && ./autogen.sh && CXXFLAGS="-fPIC -O2 -g" ./configure --disable-shared && make -j4 && make install) && \
-    (cd third_party/abseil-cpp/ && cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo . && cmake -j4 && make install) && \
-    (cd third_party/re2/  && cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DRE2_BUILD_TESTING=OFF . && make -j4 && make install) && \
-    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DgRPC_BUILD_TESTS=OFF -DgRPC_ZLIB_PROVIDER=package -DgPRC_SSL_PROVIDER=package \
-    -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_RE2_PROVIDER=package -DgRPC_ABSL_PROVIDER=package . && \
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DgRPC_BUILD_TESTS=OFF . && \
     make -j4 && make install && cd .. && rm -rf grpc
 
 RUN wget https://github.com/libuv/libuv/archive/refs/tags/v1.42.0.tar.gz && \
