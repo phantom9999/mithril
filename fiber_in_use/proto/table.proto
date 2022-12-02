@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package meta;
+
+message Creative {
+  uint64 id = 1;
+  uint64 unit_id = 2;
+  uint64 campaign_id = 3;
+  uint64 account_id = 4;
+}
+
+message Unit {
+  uint64 id = 1;
+  uint64 campaign_id = 2;
+  uint64 account_id = 3;
+}
+
+message Campaign {
+  uint64 id = 1;
+  uint64 account_id = 2;
+}
+
+message Account {
+  uint64 id = 1;
+}
+
+message RedisKey {
+  enum PayloadType {
+    CREATIVE = 0;
+    UNIT = 1;
+    CAMPAIGN = 2;
+    ACCOUNT = 3;
+  }
+  PayloadType payload_type = 1;
+  uint64 id = 2;
+}

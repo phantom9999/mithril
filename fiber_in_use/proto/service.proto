@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "table.proto";
+
+package meta;
+
+message Request {
+  uint64 creative_id = 1;
+}
+
+message Response {
+  Creative creative = 1;
+  Unit unit = 2;
+  Campaign campaign = 3;
+  Account account = 4;
+}
+
+service CacheService {
+  rpc Get(Request) returns(Response);
+}
