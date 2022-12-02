@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.18)
 project(fiber_and_coroutine)
 
 set(CMAKE_CXX_STANDARD 17)
-
+set(CMAKE_CXX_EXTENSIONS ON)
 if (CMAKE_HOST_UNIX)
     find_package(Protobuf REQUIRED)
     find_package(glog REQUIRED)
     find_package(gflags COMPONENTS static)
-    message(${GFLAGS_TARGET})
     find_package(gRPC REQUIRED)
     find_package(absl REQUIRED)
+    #find_package(redis++ REQUIRED)
     find_package(Boost COMPONENTS fiber REQUIRED)
     include(cmake/grpc_plugin.cmake)
     protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/service.proto proto/table.proto)
@@ -40,6 +40,9 @@ if (CMAKE_HOST_UNIX)
             gRPC::grpc++_reflection
             glog::glog
             gflags
+            redis++
+            hiredis
+            uv
             ${Boost_LIBRARIES}
     )
 endif()

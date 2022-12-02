@@ -26,10 +26,10 @@ RUN wget https://github.com/libuv/libuv/archive/refs/tags/v1.42.0.tar.gz && \
     tar -xf v1.42.0.tar.gz && cd libuv-1.42.0/ && cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TESTING=OFF . && \
     make -j4 && make install && cd ../ && rm -rf libuv-1.42.0 v1.42.0.tar.gz
 
-RUN wget https://github.com/sewenew/redis-plus-plus/archive/refs/tags/1.3.6.tar.gz && \
-    tar -xf 1.3.6.tar.gz && cd redis-plus-plus-1.3.6/ && mkdir build && cd build && \
+RUN wget https://github.com/sewenew/redis-plus-plus/archive/refs/tags/1.3.5.tar.gz && \
+    tar -xf 1.3.5.tar.gz && cd redis-plus-plus-1.3.5/ && mkdir build && cd build && \
     cmake -DREDIS_PLUS_PLUS_BUILD_ASYNC=libuv -DREDIS_PLUS_PLUS_ASYNC_FUTURE=std -DREDIS_PLUS_PLUS_BUILD_SHARED=OFF -DREDIS_PLUS_PLUS_BUILD_TEST=OFF .. && \
-    make -j4 && make install && cd ../../ && rm -rf redis-plus-plus-1.3.6 1.3.6.tar.gz
+    make -j4 && make install && cd ../../ && rm -rf redis-plus-plus-1.3.5 1.3.5.tar.gz
 
 
 
