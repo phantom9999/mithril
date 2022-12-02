@@ -1,14 +1,11 @@
-#include "FiberPool.h"
-
+/*
+#include "fiber_pool.h"
+#include "default_pool.h"
 #include <iostream>
 #include <sstream>
 
 using namespace std::literals::chrono_literals;
 
-/**
- * Example of a functor that will
- * be executed by a FiberPool
- */
 struct SomeFunctor
 {
     std::string msg {};
@@ -133,18 +130,18 @@ custom_pool()
 	// any short queue
 	auto work_queue_size {4u};
 
-	FiberPool::FiberPool fiber_pool {
+	fiber::FiberPool fiber_pool {
 					no_worker_threads,
 					work_queue_size};
 
 	// submit a function to the pool with one paramter
-	auto factorial_future = fiber_pool.submit(&factorial, 20);
+	auto factorial_future = fiber_pool.Submit(&factorial, 20);
 
 	// submit another function which will return result
 	// by reference
 	std::vector<uint64_t> primes;
 
-	auto primes_future = fiber_pool.submit(&find_primes,
+	auto primes_future = fiber_pool.Submit(&find_primes,
 										   20,
 										   std::ref(primes));
 
@@ -167,34 +164,32 @@ custom_pool()
 
 	std::cout << "\b\b " <<  std::endl;
 
-	fiber_pool.close_queue();
+	fiber_pool.CloseQueue();
 }
 
 
 
 
 int
-main(int argc, const char *argv[])
-{
+main(int argc, const char *argv[]) {
 // In the few following examples we are going
 // to use DefaultFiberPool only
 
 
 // submit lambda to the pool
-auto future_1 = DefaultFiberPool::submit_job(
-    [](){
-            size_t i = 0;
+  auto future_1 = fiber::DefaultPool::SubmitJob(
+      []() {
+        size_t i = 0;
 
-            while(++i < 5)
-            {
-                std::ostringstream os;
-                os  << "lambda task i: " << i <<  '\n';
-                std::cout << os.str() << std::flush;
-                boost::this_fiber::sleep_for(2s);
-            }
+        while (++i < 5) {
+          std::ostringstream os;
+          os << "lambda task i: " << i << '\n';
+          std::cout << os.str() << std::flush;
+          boost::this_fiber::sleep_for(2s);
+        }
 
-            return i;
-        });
+        return i;
+      });
 
 // we are not waiting here for it to finish running
 // as the fiber created for the lumbda submitted is
@@ -205,21 +200,20 @@ auto future_1 = DefaultFiberPool::submit_job(
 // instead we just proceed to submit next lambda
 
 // submit 10 functors to the pool
-using task_future_t = std::optional<boost::fibers::future<void>>;
-std::vector<task_future_t> futures;
+  using task_future_t = std::optional<boost::fibers::future<void>>;
+  std::vector<task_future_t> futures;
 
-for (auto i = 0; i < 10; i++)
-{
-	 // the functor will notify when a fiber executing it
-	 // has switch thread
-	 auto&& a_future = DefaultFiberPool::submit_job(SomeFunctor(),
-								 "functor: " + std::to_string(i));
+  for (auto i = 0; i < 10; i++) {
+    // the functor will notify when a fiber executing it
+    // has switch thread
+    auto &&a_future = fiber::DefaultPool::SubmitJob(SomeFunctor(),
+                                                    "functor: " + std::to_string(i));
 
-	 // we need to store the futures, otherwise
-	 // they will block, bacause we use our FiberPool::TaskFuture
-	 // wraper over orginal boost::fiber::future
-	 futures.push_back(std::forward<task_future_t>(a_future));
-}
+    // we need to store the futures, otherwise
+    // they will block, bacause we use our FiberPool::TaskFuture
+    // wraper over orginal boost::fiber::future
+    futures.push_back(std::forward<task_future_t>(a_future));
+  }
 
 // again, not waiting for any of these functors to finish. they
 // are run by fibers in the FiberPool. We just proceed to submition
@@ -227,12 +221,11 @@ for (auto i = 0; i < 10; i++)
 
 // submit another lambda which will take parameter
 // by reference
-std::string val {};
-std::string msg {"FiberPool"};
+  std::string val{};
+  std::string msg{"FiberPool"};
 
-auto future_2 = DefaultFiberPool::submit_job(
-    [](auto const& in_str,  auto& out_str)
-    {
+  auto future_2 = fiber::DefaultPool::SubmitJob(
+      [](auto const &in_str, auto &out_str) {
         // suspend this task's fiber for 3s
         boost::this_fiber::sleep_for(3s);
 
@@ -242,49 +235,48 @@ auto future_2 = DefaultFiberPool::submit_job(
 
         out_str = in_str;
 
-    }, std::cref(msg), std::ref(val));
+      }, std::cref(msg), std::ref(val));
 
 
 // we can also specify fiber launch policy
 // default is post in all other examples.
 // but here we can choose dispatch for instance
-auto future_3 = DefaultFiberPool::submit_job(
-        boost::fibers::launch::dispatch,
-        throws);
+  auto future_3 = fiber::DefaultPool::SubmitJob(
+      boost::fibers::launch::dispatch,
+      throws);
 
 // now we dont have any more tasks to submit, so we can
 // wait for their completion.
 // we use future to wait.
 
-auto result_1 = future_1->get();
+  auto result_1 = future_1->get();
 
-std::cout << "val: " << val << std::endl;
-std::cout << "result from first lambda: " << result_1 << std::endl;
+  std::cout << "val: " << val << std::endl;
+  std::cout << "result from first lambda: " << result_1 << std::endl;
 
 // wait for future 3
-future_3->wait();
+  future_3->wait();
 
 // get exception pointer to check if the task thrown something
-auto exp_ptr = future_3->get_exception_ptr();
+  auto exp_ptr = future_3->get_exception_ptr();
 
-if (exp_ptr)
-{
+  if (exp_ptr) {
     // if exception was thrown, rethrow it
     std::cout << "have some exception" << std::endl;
     try {
-        std::rethrow_exception(exp_ptr);
+      std::rethrow_exception(exp_ptr);
     }
-    catch(std::exception const& e)
-    {
-        std::cout << "catched rethrown exception: "
-                  << e.what() << std::endl;
+    catch (std::exception const &e) {
+      std::cout << "catched rethrown exception: "
+                << e.what() << std::endl;
     }
-}
+  }
 
-DefaultFiberPool::close();
+  fiber::DefaultPool::Close();
 
 // now we try using custom pool
-custom_pool();
+  custom_pool();
 
-return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
+*/

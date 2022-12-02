@@ -58,17 +58,4 @@ if(NOT DEFINED GRPC_GENERATE_CPP_APPEND_PATH)
     set(GRPC_GENERATE_CPP_APPEND_PATH TRUE)
 endif()
 
-
-
-
-# Find gRPC CPP generator
 find_program(GRPC_CPP_PLUGIN NAMES grpc_cpp_plugin)
-mark_as_advanced(GRPC_CPP_PLUGIN)
-add_executable(gRPC::grpc_cpp_plugin IMPORTED)
-set_target_properties(gRPC::grpc_cpp_plugin PROPERTIES
-        IMPORTED_LOCATION ${GRPC_CPP_PLUGIN}
-        )
-
-include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(gRPC DEFAULT_MSG
-        GRPC_LIBRARY GRPC_INCLUDE_DIR GRPC_GRPC++_REFLECTION_LIBRARY GRPC_CPP_PLUGIN)

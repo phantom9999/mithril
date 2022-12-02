@@ -118,3 +118,6 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 .idea/
+incs/
+build/
+cmake-build-debug/
