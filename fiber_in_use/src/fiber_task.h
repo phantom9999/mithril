@@ -20,8 +20,7 @@ class IFiberTask {
 };
 
 template <typename Func>
-class FiberTask: public IFiberTask
-{
+class FiberTask: public IFiberTask {
  public:
   explicit FiberTask(Func&& func) :func_{std::move(func)} { }
 

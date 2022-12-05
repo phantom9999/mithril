@@ -3,14 +3,9 @@
 #include <memory>
 #include <sw/redis++/async_redis++.h>
 #include <boost/fiber/all.hpp>
+#include "fiber_define.h"
 
 namespace fiber {
-
-template<typename Type>
-using Promise = boost::fibers::promise<Type>;
-
-template<typename Type>
-using Future = boost::fibers::future<Type>;
 
 using sw::redis::ConnectionOptions;
 using sw::redis::ConnectionPoolOptions;

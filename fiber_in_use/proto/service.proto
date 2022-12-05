@@ -18,3 +18,9 @@ message Response {
 service CacheService {
   rpc Get(Request) returns(Response);
 }
+
+message HelloRequest { }
+message HelloResponse { }
+service HelloService {
+  rpc hello(HelloRequest) returns(HelloResponse);
+}
