@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package example;
+
+message Msg1 {
+  string key1 = 1;
+}
+
+message Msg2 {
+  string key2 = 1;
+}
+
+message Msg3 {
+  string key3 = 1;
+}

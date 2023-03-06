@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option cc_generic_services = true;
+
+package apollo;
+
+message ApiResponse {
+  string appId = 1;
+  string cluster = 2;
+  string namespaceName = 3;
+  map<string, string> configurations = 4;
+  string releaseKey = 5;
+}
+
+message DeliverRequest {
+  string server = 1;
+  string app = 2;
+  string cluster = 3;
+  string token = 4;
+}
+
+message DeliverResponse {
+  repeated ApiResponse data = 1;
+}
+
+service ApolloDeliverService {
+  rpc GetConfig(DeliverRequest) returns(DeliverResponse);
+}
