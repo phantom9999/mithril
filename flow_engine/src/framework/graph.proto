@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package flow;
+
+message FlowDefine {
+  enum NodeName {
+    NODE_UNKNOWN = 0;
+    NODE_1 = 1;
+    NODE_2 = 2;
+    NODE_3 = 3;
+    NODE_4 = 4;
+    NODE_5 = 5;
+    NODE_6 = 6;
+    NODE_7 = 7;
+    NODE_8 = 8;
+    NODE_9 = 9;
+    NODE_10 = 10;
+    NODE_11 = 11;
+    NODE_12 = 12;
+    NODE_13 = 13;
+    NODE_14 = 14;
+    NODE_15 = 15;
+    NODE_16 = 16;
+    NODE_17 = 17;
+    NODE_18 = 18;
+  }
+  enum GraphName {
+    GRAPH_1 = 0;
+    GRAPH_2 = 1;
+  }
+  enum ContextName {
+    CONTEXT_1 = 0;
+    CONTEXT_2 = 1;
+    REQUEST = 2;
+    RESPONSE = 3;
+  }
+}
+
+message AttrValue {
+  enum DataType {
+    DT_UNKNOWN = 0;
+    DT_STRING = 1;
+    DT_BYTES = 2;
+    DT_INT = 3;
+    DT_FLOAT = 4;
+    DT_DOUBLE = 5;
+    DT_BOOL = 6;
+  }
+  message ListValue {
+    DataType dt = 1;
+    repeated string str_val = 2;
+    repeated bytes bytes_val = 3;
+    repeated int64 int_val = 4 [packed = true];
+    repeated float float_val = 5 [packed = true];
+    repeated double double_val = 6 [packed = true];
+    repeated bool bool_val = 7 [packed = true];
+  }
+
+  DataType dt = 1;
+
+  oneof value {
+    string str_val = 2;
+    bytes bytes_val = 3;
+    int64 int_val = 4;
+    float float_val = 5;
+    bool bool_val = 6;
+    ListValue list_val = 7;
+  }
+}
+
+message OpAttr {
+  map<string, AttrValue> attr_map = 1;
+}
+
+message NodeDef {
+  FlowDefine.NodeName name = 1;
+  string op_name = 2;
+  OpAttr op_attr = 3;
+}
+
+message Edge {
+  FlowDefine.NodeName from = 1;
+  FlowDefine.NodeName to = 2;
+}
+
+message GraphDef {
+  FlowDefine.GraphName name = 1;
+  repeated NodeDef nodes = 2;
+  repeated Edge edges = 3;
+}
+
+message ExecutorDef {
+  repeated GraphDef graph_defs = 1;
+  uint32 thread_size = 2;
+  uint32 queue_size = 3;
+}
+

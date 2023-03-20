@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "graph.proto";
+
+message Request {
+  flow.FlowDefine.GraphName graph_name = 1;
+}
+
+message Response {
+
+}
+
+service GraphService {
+  rpc Call(Request) returns(Response);
+  rpc Call2(Request) returns(Response);
+}
+
+

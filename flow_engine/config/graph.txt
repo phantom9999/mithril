@@ -1,0 +1,90 @@
+thread_size : 8
+queue_size : 128
+
+graph_defs: {
+    name : GRAPH_2
+    nodes : {
+        name : NODE_1
+        op_name: "Op1"
+        op_attr: {
+            attr_map: {
+                key: "xxx"
+                value: {
+                    str_val: "qqq"
+                }
+            }
+        }
+    }
+    nodes : {
+        name : NODE_2
+        op_name: "Op2"
+        op_attr: {
+            attr_map: {
+                key: "xxx"
+                value: {
+                    list_val: {
+                        int_val:21
+                        int_val:12
+                    }
+                }
+            }
+        }
+    }
+    nodes : {
+        name : NODE_3
+        op_name: "Op3"
+    }
+    nodes : {
+        name : NODE_4
+        op_name: "Op4"
+    }
+    nodes : {
+        name : NODE_5
+        op_name: "Op5"
+    }
+    nodes : {
+        name : NODE_6
+        op_name: "Op6"
+    }
+    nodes : {
+        name : NODE_7
+        op_name: "Op7"
+    }
+    nodes : {
+        name : NODE_8
+        op_name: "Op8"
+    }
+
+    edges: {
+        from : NODE_1
+        to : NODE_3
+    }
+    edges: {
+        from : NODE_1
+        to : NODE_4
+    }
+    edges: {
+        from : NODE_2
+        to : NODE_5
+    }
+    edges: {
+        from : NODE_3
+        to : NODE_7
+    }
+    edges: {
+        from : NODE_4
+        to : NODE_6
+    }
+    edges: {
+        from : NODE_5
+        to : NODE_6
+    }
+    edges: {
+        from : NODE_6
+        to : NODE_7
+    }
+    edges: {
+        from : NODE_6
+        to : NODE_8
+    }
+}
