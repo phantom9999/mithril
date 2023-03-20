@@ -18,6 +18,8 @@
         - java版本的图引擎服务
     - material_server(todo)
         - 正排服务实现
+    - redis_forward_index(todo)
+        - 基于redis实现的正排系统
 - 工具类代码
     - pb_base_conf
         - 基于protobuf text格式实现的配置系统
