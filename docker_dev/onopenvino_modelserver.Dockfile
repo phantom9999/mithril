@@ -1,0 +1,76 @@
+FROM ubuntu:20.04
+
+ENV TF_SYSTEM_LIBS="curl"
+SHELL ["/bin/bash", "-c"]
+RUN apt update && apt install -y \
+            build-essential \
+            cmake \
+            automake \
+            autoconf \
+            curl \
+            git \
+            libusb-dev \
+            libusb-1.0-0-dev \
+            libcurl4-openssl-dev \
+            libtool \
+            libxml2-dev \
+            libnuma-dev \
+            libssl-dev \
+            patch \
+            pkg-config \
+            python2 \
+            python2-dev \
+            python-setuptools \
+            python3 \
+            python3-pip \
+            python3-dev \
+            python3-setuptools \
+            python3-virtualenv \
+            python3-numpy \
+            python-is-python3 \
+            unzip \
+            wget \
+            unzip \
+            uuid \
+            uuid-dev \
+            xz-utils && \
+            apt clean
+
+WORKDIR /build
+
+# Bazel
+ENV BAZEL_VERSION 3.7.2
+RUN curl -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" -fSsL -O https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
+    chmod +x bazel-*.sh && \
+    ./bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
+    rm -f bazel-$BAZEL_VERSION-installer-linux-x86_64.sh
+
+####### Build OpenCV
+RUN wget https://github.com/opencv/opencv/archive/refs/tags/4.6.0.tar.gz && tar -xf 4.6.0.tar.gz && cd opencv-4.6.0 && \
+    mkdir build && cd build && cmake -DBUILD_LIST=core,improc,imgcodecs -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/opencv \
+    -DOPENCV_LIB_INSTALL_PATH=lib -DWITH_OPENJPEG=OFF -DWITH_JASPER=OFF -DWITH_OPENEXR=OFF .. && \
+    make -j16 && make install && cd ../../ && rm -rf 4.6.0.tar.gz opencv-4.6.0
+####### End of OpenCV
+
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/intel/openvino/runtime/lib/intel64/:/opt/opencv/lib/:/opt/intel/openvino/runtime/3rdparty/tbb/lib/
+ENV BAZEL_LINKLIBS=-l%:libstdc++.a
+
+COPY . .
+
+RUN cd openvino-2022.2.0/ && (rm -rf build || true) && mkdir build && cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_SAMPLES=0 -DNGRAPH_USE_CXX_ABI=1 -DCMAKE_CXX_FLAGS=" -D_GLIBCXX_USE_CXX11_ABI=1 -Wno-error=parentheses "  \
+    -DENABLE_INTEL_GPU=OFF -DENABLE_INTEL_MYRIAD_COMMON=OFF -DENABLE_FASTER_BUILD=ON -DENABLE_CPPLINT=OFF -DENABLE_CLANG_FORMAT=OFF  \
+    -DENABLE_OV_ONNX_FRONTEND=OFF -DENABLE_OV_PADDLE_FRONTEND=OFF -DENABLE_INTEL_GNA=OFF -DENABLE_ONEDNN_FOR_GPU=OFF -DCMAKE_INSTALL_PREFIX=/opt/intel/openvino .. && \
+    make -j16 && make install
+
+# Build OpenVINO Model Server
+RUN cd model_server-2022.2 && bazel build @org_tensorflow//tensorflow/core:framework
+RUN cd model_server-2022.2 && bazel build @tensorflow_serving//tensorflow_serving/apis:prediction_service_cc_proto
+
+# Set OVMS version strings
+RUN cd model_server-2022.2 && bazel build //src:ovms
+
+RUN cd model_server-2022.2 && cd src/example/SampleCpuExtension/ && make
+
+RUN (rm -rf runtime || true) && mkdir -p runtime/bin && cp model_server-2022.2/bazel-bin/src/ovms runtime/bin/ && runtime/bin/ovms --version
+
