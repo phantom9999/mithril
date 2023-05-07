@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package torch.serving;
+
+
+
+message BatchConfig {
+  bool enable = 1;
+
+  // SharedBatchScheduler options (see shared_batch_scheduler.h):
+  //
+
+  // The maximum size of each batch.
+  //
+  // IMPORTANT: As discussed above, use 'max_batch_size * 2' client threads to
+  // achieve high throughput with batching.
+  uint32 max_batch_size = 2;
+
+  // If a task has been enqueued for this amount of time (in microseconds), and
+  // a thread is available, the scheduler will immediately form a batch from
+  // enqueued tasks and assign the batch to the thread for processing, even if
+  // the batch's size is below 'max_batch_size'.
+  uint32 batch_timeout_micros = 3;
+
+  // The maximum length of the queue, in terms of the number of batches. (A
+  // batch that has been scheduled on a thread is considered to have been
+  // removed from the queue.)
+  uint32 max_enqueued_batches = 4;
+
+  // The number of threads to use to process batches.
+  // Must be >= 1, and should be tuned carefully.
+  uint32 num_batch_threads = 5;
+
+  // BatchingSession options (see batching_session.h):
+  //
+
+  // The allowed batch sizes. (Ignored if left empty.)
+  // Requirements:
+  //  - The entries must be in increasing order.
+  //  - The final entry must equal 'max_batch_size'.
+  repeated uint32 allowed_batch_sizes = 6;
+
+  // Whether to pad variable-length inputs when a batch is formed.
+  bool pad_variable_length_inputs = 7;
+}

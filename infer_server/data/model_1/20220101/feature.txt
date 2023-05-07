@@ -1,0 +1,8 @@
+feature_specs: {
+    name: "img"
+    shape: 1
+    shape: 28
+    shape: 28
+    dtype: DT_FLOAT
+}
+

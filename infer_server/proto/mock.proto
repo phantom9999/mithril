@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package torch.serving;
+
+message MockRequest {
+  repeated int32 shape = 1;
+  repeated float data = 2;
+  int32 result = 3;
+}
+
+
+
+
+
+
+

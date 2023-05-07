@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+import "batch_config.proto";
+
+package torch.serving;
+
+message ServableVersionPolicy {
+  // Serve the latest versions (i.e. the ones with the highest version
+  // numbers), among those found on disk.
+  //
+  // This is the default policy, with the default number of versions as 1.
+  message Latest {
+    // Number of latest versions to serve. (The default is 1.)
+    uint32 num_versions = 1;
+  }
+
+  // Serve all versions found on disk.
+  message All {}
+
+  // Serve a specific version (or set of versions).
+  //
+  // This policy is useful for rolling back to a specific version, or for
+  // canarying a specific version while still serving a separate stable
+  // version.
+  message Specific {
+    // The version numbers to serve.
+    repeated int64 versions = 1;
+  }
+
+  oneof policy_choice {
+    Latest latest = 100;
+    All all = 101;
+    Specific specific = 102;
+  }
+}
+
+message Define {
+  enum Platform {
+    UNKNOWN = 0;
+    TORCH = 1;
+    ONNX = 2;
+  }
+}
+
+message ModelConfig {
+  string name = 1;
+  string path = 2;
+  ServableVersionPolicy policy = 3;
+  Define.Platform platform = 4;
+  bool use_batch = 5;
+}
+
+message ModelManagerConfig {
+  repeated ModelConfig mode_configs = 1;
+  int64 interval = 2; // 秒
+  BatchConfig batch_config = 3;
+}
+
+message Quantile {
+  double quantile_percent = 1;
+  double error_percent = 2;
+}
+
+message MetricsConfig {
+  bool enable = 1;
+  int32 port = 2;
+  uint32 time_windows = 3;
+  repeated Quantile quantiles = 4;
+}
+
+message ServerConfig {
+  ModelManagerConfig model_manager_config = 1;
+  int32 grpc_port = 2;
+  MetricsConfig metrics_config = 3;
+}

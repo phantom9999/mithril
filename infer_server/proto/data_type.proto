@@ -1,0 +1,14 @@
+syntax = "proto3";
+package inference;
+
+enum DataType {
+  DT_INVALID = 0;
+  DT_BOOL = 1;
+  DT_INT32 = 2;
+  DT_UINT32 = 3;
+  DT_INT64 = 4;
+  DT_UINT64 = 5;
+  DT_FLOAT = 6;
+  DT_DOUBLE = 7;
+  DT_STRING = 8;
+}

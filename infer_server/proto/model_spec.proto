@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "data_type.proto";
+
+package inference;
+
+message FeatureSpec {
+  string name = 1;
+  repeated int64 shape = 2;
+  DataType dtype = 3;
+}
+
+message ModelSpec {
+  repeated FeatureSpec feature_specs = 1;
+  string label = 2;
+}
+

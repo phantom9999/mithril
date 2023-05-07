@@ -1,0 +1,11 @@
+
+port : 8080
+model_manager_config : {
+    interval: 10
+    mode_configs: {
+        name: "MODEL_1"
+        path: "data"
+    }
+}
+
+
