@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "proto/feature.proto";
+
+package proto;
+
+message FeatureRequest {
+  string trace_id = 1;
+  uint64 user_id = 2;
+  Define.Biz biz = 3;
+  repeated Define.FeatureName names = 4;
+}
+
+message FeatureResponse {
+  string trace_id = 1;
+  uint64 user_id = 2;
+  Define.Biz biz = 3;
+  repeated FeatureItem items = 4;
+}
+
+service FeatureService {
+  rpc GetFeature(FeatureRequest) returns(FeatureResponse);
+}
+

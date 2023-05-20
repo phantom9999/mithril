@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package proto;
+
+message Define {
+  enum Biz {
+    BIZ_UNKNOWN = 0;
+    BIZ_1 = 1;
+    BIZ_2 = 2;
+  }
+  enum FeatureName {
+    FEATURE_UNKNOWN = 0;
+    FEATURE_1 = 1;
+    FEATURE_2 = 2;
+  }
+  enum DataType {
+    TYPE_UNKNOWN = 0;
+    TYPE_INT32 = 1;
+    TYPE_INT64 = 2;
+    TYPE_UINT32 = 3;
+    TYPE_UINT64 = 4;
+    TYPE_FLOAT32 = 5;
+    TYPE_FLOAT64 = 6;
+    TYPE_BYTES = 7;
+    TYPE_BOOL = 8;
+  }
+}
+
+
+message FeatureItem {
+  Define.FeatureName name = 1;
+  Define.DataType type = 2;
+  repeated int32 int32_arr = 3;
+  repeated int64 int64_arr = 4;
+  repeated uint32 uint32_arr = 5;
+  repeated uint64 uint64_arr = 6;
+  repeated float fp32_arr = 7;
+  repeated double fp64_arr = 8;
+  repeated bytes bytes_arr = 9;
+  repeated bool bool_arr = 10;
+}
+
+message FeatureGroup {
+  repeated FeatureItem items = 1;
+}
+
+message FeatureKey {
+  Define.Biz biz = 1;
+  Define.FeatureName name = 2;
+  uint64 user_id = 3;
+  int64 version = 4;
+}
+
+message FeatureValue {
+  Define.Biz biz = 1;
+  Define.FeatureName name = 2;
+  int32 version = 3;
+  oneof type {
+    FeatureItem feature_item = 4;
+    FeatureGroup feature_group = 5;
+  }
+}
+
