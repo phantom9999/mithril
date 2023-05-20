@@ -27,6 +27,7 @@ get_target_property(protoc_location protobuf::protoc LOCATION)
 add_library(feature_protos
         proto/service.proto
         proto/feature.proto
+        proto/sink.proto
         )
 protobuf_generate(TARGET feature_protos LANGUAGE cpp)
 protobuf_generate(TARGET feature_protos LANGUAGE grpc

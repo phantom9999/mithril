@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "proto/feature.proto";
+
+package proto;
+
+message FeatureMeta {
+  Define.FeatureName name = 1;
+  uint32 version = 2;
+}
+
+message HostMeta {
+  string host = 1;
+  uint64 timestamp = 2;
+}
+
+message FeatureLog {
+  string trace_id = 1;
+  uint64 user_id = 2;
+  Define.Biz biz = 3;
+  HostMeta host_meta = 4;
+  repeated FeatureMeta metas = 5;
+}

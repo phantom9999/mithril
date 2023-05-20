@@ -4,25 +4,19 @@
 
 #include "proto/service.grpc.pb.h"
 
-
-namespace sw::redis {
-class AsyncRedisCluster;
-}
-
 namespace ad {
-
-using RedisClientPtr = std::shared_ptr<sw::redis::AsyncRedisCluster>;
+class ResourceManager;
 
 class FeatureServiceImpl : public proto::FeatureService::Service {
  public:
-  explicit FeatureServiceImpl(const RedisClientPtr& redis_client_ptr);
-  ~FeatureServiceImpl() override;
+  explicit FeatureServiceImpl(const std::shared_ptr<ResourceManager>& resource_manager);
+  ~FeatureServiceImpl() override = default;
   grpc::Status GetFeature(::grpc::ServerContext *context,
                           const ::proto::FeatureRequest *request,
                           ::proto::FeatureResponse *response) override;
 
  private:
-  std::shared_ptr<sw::redis::AsyncRedisCluster> client_;
+  const std::shared_ptr<ResourceManager> resource_manager_;
 };
 
 

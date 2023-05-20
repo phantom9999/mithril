@@ -3,32 +3,36 @@
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
-#include <sw/redis++/async_redis++.h>
+#include <glog/logging.h>
+#include <absl/cleanup/cleanup.h>
 
 #include "feature_service_impl.h"
-
+#include "resource_manager.h"
 
 
 int main(int argc, char** argv) {
+  google::ParseCommandLineFlags(&argc, &argv, true);
+  google::InitGoogleLogging(argv[0]);
+  google::InstallFailureSignalHandler();
+
+  auto cleanup = absl::MakeCleanup([](){
+    google::ShutdownGoogleLogging();
+    google::ShutDownCommandLineFlags();
+  });
+
   std::string server_address("0.0.0.0:8080");
 
-  std::shared_ptr<sw::redis::AsyncRedisCluster> redis_cluster;
-  {
-    using namespace sw::redis;
-    ConnectionOptions opts;
-    opts.host = "localhost";
-    opts.port = 6379;
-
-    sw::redis::ConnectionPoolOptions pool_opts;
-    pool_opts.size = 3;
-    redis_cluster = std::make_shared<sw::redis::AsyncRedisCluster>(opts, pool_opts);
+  auto resource_manager = std::make_shared<ad::ResourceManager>();
+  if (!resource_manager->Init()) {
+    LOG(ERROR) << "resource init error";
+    return -1;
   }
 
   grpc::EnableDefaultHealthCheckService(true);
   grpc::reflection::InitProtoReflectionServerBuilderPlugin();
   grpc::ServerBuilder builder;
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-  ad::FeatureServiceImpl feature_service(redis_cluster);
+  ad::FeatureServiceImpl feature_service(resource_manager);
   builder.RegisterService(&feature_service);
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
   std::cout << "Server listening on " << server_address << std::endl;
