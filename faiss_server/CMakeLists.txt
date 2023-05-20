@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.21)
+project(faiss_server)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-
-find_package(Protobuf REQUIRED)
+find_package(protobuf REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 find_package(absl REQUIRED)
@@ -60,13 +59,13 @@ target_link_libraries(
     common
     faiss_proto
     absl::strings
-    gflags::gflags
+    gflags
 )
 target_link_libraries(
     faiss_builder
     common
     faiss_proto
-    gflags::gflags
+    gflags
     absl::strings
     faiss
     glog::glog
@@ -78,7 +77,7 @@ target_link_libraries(
     common
     gRPC::grpc++
     glog::glog
-    gflags::gflags
+    gflags
     protobuf::libprotobuf
     faiss
 )

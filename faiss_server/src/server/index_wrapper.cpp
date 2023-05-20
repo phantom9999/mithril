@@ -47,7 +47,7 @@ SearchStatus IndexWrapper::Search(const SearchParam &param, SearchResult *result
   }
 
   uint32_t result_size = param.query_size * param.topk;
-  std::vector<faiss::Index::idx_t> ids(result_size);
+  std::vector<faiss::idx_t> ids(result_size);
   std::vector<float> scores(result_size);
   try {
     index->search(param.query_size, param.vec, param.topk, scores.data(), ids.data());
