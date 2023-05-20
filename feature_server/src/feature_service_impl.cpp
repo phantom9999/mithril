@@ -1,6 +1,7 @@
 #include "feature_service_impl.h"
 
 #include "resource_manager.h"
+#include "proto/sink.pb.h"
 
 
 namespace ad {
@@ -47,11 +48,31 @@ grpc::Status FeatureServiceImpl::GetFeature(::grpc::ServerContext *context,
       default:break;
     }
   }
+  Sink(*response);
+
   return grpc::Status::OK;
 }
 FeatureServiceImpl::FeatureServiceImpl(const std::shared_ptr<ResourceManager>& resource_manager)
   : resource_manager_(resource_manager) {
 
+}
+void FeatureServiceImpl::Sink(const proto::FeatureResponse &response) {
+  if (response.items_size() == 0) {
+    return;
+  }
+  proto::FeatureLog feature_log;
+  feature_log.set_user_id(response.user_id());
+  feature_log.set_trace_id(response.trace_id());
+  feature_log.set_biz(response.biz());
+  for (const auto& item : response.items()) {
+    auto meta = feature_log.add_metas();
+    meta->set_name(item.name());
+    meta->set_version(item.version());
+  }
+  auto* host = feature_log.mutable_host_meta();
+  host->set_host(ResourceManager::GetHost());
+  host->set_timestamp(std::time(nullptr));
+  resource_manager_->Sink(feature_log.SerializeAsString());
 }
 }
 

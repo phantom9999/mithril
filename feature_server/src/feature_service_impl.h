@@ -16,6 +16,9 @@ class FeatureServiceImpl : public proto::FeatureService::Service {
                           ::proto::FeatureResponse *response) override;
 
  private:
+  void Sink(const ::proto::FeatureResponse& response);
+
+ private:
   const std::shared_ptr<ResourceManager> resource_manager_;
 };
 
