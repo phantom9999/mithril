@@ -4,7 +4,7 @@
 #include <grpcpp/grpcpp.h>
 #include <google/protobuf/message.h>
 #include <boost/noncopyable.hpp>
-#include "rpc_config.pb.h"
+#include "protos/rpc_config.pb.h"
 
 namespace flow {
 

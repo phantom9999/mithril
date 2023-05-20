@@ -2,7 +2,7 @@
 #include <iostream>
 #include <boost/log/trivial.hpp>
 #include <boost/fiber/all.hpp>
-#include "graph.pb.h"
+#include "protos/graph.pb.h"
 
 namespace flow {
 

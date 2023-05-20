@@ -6,7 +6,7 @@
 #include <boost/log/trivial.hpp>
 #include <google/protobuf/text_format.h>
 
-#include "graph.pb.h"
+#include "protos/graph.pb.h"
 #include "flow_context.h"
 #include "fiber_pool.h"
 #include "fiber_latch.h"

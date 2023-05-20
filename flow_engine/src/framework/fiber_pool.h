@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <boost/fiber/all.hpp>
 #include "fiber_task.h"
 

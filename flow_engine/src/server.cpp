@@ -3,8 +3,8 @@
 #include <thread>
 #include <boost/log/trivial.hpp>
 #include "framework/flow_executor.h"
-#include "graph.pb.h"
-#include "service.grpc.pb.h"
+#include "protos/graph.pb.h"
+#include "protos/service.grpc.pb.h"
 #include "framework/flow_context.h"
 #include "framework/fiber_grpc.h"
 

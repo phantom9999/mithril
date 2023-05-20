@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "graph.proto";
+import "protos/graph.proto";
 
 message Request {
   flow.FlowDefine.GraphName graph_name = 1;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <vector>
 #include <memory>
 #include "flow_op.h"

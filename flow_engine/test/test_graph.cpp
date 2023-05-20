@@ -3,9 +3,9 @@
 #include <boost/type_traits.hpp>
 #include <boost/function_types/function_type.hpp>
 
-#include "../src/framework/flow_graph.h"
-#include "graph.pb.h"
-#include "../src/framework/flow_executor.h"
+#include "framework/flow_graph.h"
+#include "protos/graph.pb.h"
+#include "framework/flow_executor.h"
 
 struct TT {
   int a = 1;
