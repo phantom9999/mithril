@@ -5,22 +5,26 @@
     - apollo-cpp
         - apollo配置平台的cpp客户端 
         - 支持一站式配置反序列化、容灾等功能
+    - infer_server
+        - 支持pytorch、onnx的在线推理服务
     - faiss_server
         - 基于faiss实现的向量检索服务
         - 支持建库、超惨优化
     - strategy_server
         - 基于taskflow实现的策略服务
-    - taskflow_on_fiber
-        - 基于boost.fiber实现的类taskflow的图引擎
     - flow_engine
         - 基于boost.fiber实现的图引擎服务
     - taskflow_java
         - java版本的图引擎服务
+    - feature_server
+        - 特征服务实现
     - material_server(todo)
         - 正排服务实现
     - redis_forward_index(todo)
         - 基于redis实现的正排系统
 - 工具类代码
+    - taskflow_on_fiber
+        - 基于boost.fiber实现的类taskflow的图引擎
     - pb_base_conf
         - 基于protobuf text格式实现的配置系统
     - jeprof_in_use
